@@ -4,7 +4,7 @@ pacman() {
       return 1
   fi
 
-    case "$1" in
+  case "$1" in
     -S)
       shift
       if [ $# -eq 0  ]; then
