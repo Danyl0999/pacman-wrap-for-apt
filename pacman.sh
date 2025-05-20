@@ -8,15 +8,15 @@ pacman() {
     -S)
       shift
       if [ $# -eq 0  ]; then
-          echo "Error: No package specified for install."
+          echo "E: No package specified for install." >&2
           return 1
       fi
-      sudo apt install "$@"
+      sudo apt install -y "$@"
       ;;
     -R)
       shift
       if [ $# -eq 0 ]; then
-          echo "Error: No package specified for removal."
+          echo "E: No package specified for removal." >&2
           return 1
       fi
       sudo apt remove "$@"
@@ -26,12 +26,12 @@ pacman() {
       apt search "$@"
       ;;
     -Syu)
-      sudo apt update && sudo apt upgrade
+      sudo apt update && sudo apt upgrade -y
       ;;
     -Qi)
       shift
       if [ $# -eq 0 ]; then
-          echo "Error: No package specified for info."
+          echo "E: No package specified for info." >&2
           return 1
       fi
       apt show "$@"
@@ -52,9 +52,38 @@ pacman() {
     -Sy)
       sudo apt update
       ;;
+    -U)
+      shift
+      if [ $# -eq 0 ]; then
+          echo "E: No .deb file specified for install." >&2
+          return 1
+      fi
+      for file in "$@"; do
+        if [[ ! -f "$file" ]]; then
+          echo "E: File not found: $file" >&2
+          return 1
+        fi
+        if [[ "$file" != *.deb ]]; then
+          echo "E: Not a .deb file: $file" >&2
+          return 1
+        fi
+        sudo apt install -y "./$file"
+      done
+      ;;
+
+    -G)
+      shift
+      if [ $# -eq 0 ]; then
+          echo "E: No package specified to download." >&2
+          return 1
+      fi
+      apt download "$@"
+      ;;
     --help|-h)
       echo "Supported flags:"
       echo "  -S     → install"
+      echo "  -G     → download package as .deb file"
+      echo "  -U     → install from .deb file"
       echo "  -R     → remove"
       echo "  -Ss    → search"
       echo "  -Syu   → update and upgrade"
@@ -63,10 +92,13 @@ pacman() {
       echo "  -Ar    → autoremove"
       echo "  -Ac    → autoclean"
       echo "  -C     → clean"
-      echo "  -Sy    → update"
+      ;;
+    --version|-v)
+      echo "pacman wrapper v1.0"
       ;;
     *)
-      echo "Unsupported command."
+      echo "E: Unsupported command." >&2
       echo "Use --help to show help"
+      return 1
   esac
 }
