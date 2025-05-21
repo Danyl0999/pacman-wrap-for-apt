@@ -11,7 +11,7 @@ pacman() {
           echo "E: No package specified for install." >&2
           return 1
       fi
-      sudo apt install -y "$@"
+      sudo apt install --no-install-recommends -y "$@"
       ;;
     -R)
       shift
@@ -40,6 +40,23 @@ pacman() {
       shift
       apt list --installed "$@"
       ;;
+    -Qdt)
+      apt-mark showauto | xargs apt-cache rdepends --installed | grep -B1 "Reverse Depends:" | grep -v "Reverse Depends:" | sort | uniq
+      ;;
+    -Qe)
+      apt-mark showmanual
+      ;;
+    -Qs)
+      shift
+      if [ $# -eq 0 ]; then
+          echo "E: No search term provided." >&2
+          return 1
+      fi
+      apt list --installed 2>/dev/null | grep -i "$@"
+      ;;
+    -Qk)  
+      sudo dpkg --verify
+      ;;
     -Ar)
       sudo apt autoremove
       ;;
@@ -67,7 +84,7 @@ pacman() {
           echo "E: Not a .deb file: $file" >&2
           return 1
         fi
-        sudo apt install -y "./$file"
+        sudo apt install -y "$file"
       done
       ;;
 
@@ -81,17 +98,24 @@ pacman() {
       ;;
     --help|-h)
       echo "Supported flags:"
-      echo "  -S     → install"
+      echo "  -S     → install packages"
       echo "  -G     → download package as .deb file"
       echo "  -U     → install from .deb file"
-      echo "  -R     → remove"
-      echo "  -Ss    → search"
-      echo "  -Syu   → update and upgrade"
+      echo "  -R     → remove packages"
+      echo "  -Ss    → search in repositories"
+      echo "  -Syu   → update package list and upgrade"
+      echo "  -Sy    → update package list only"
       echo "  -Qi    → show package info"
-      echo "  -Q     → query installed"
-      echo "  -Ar    → autoremove"
-      echo "  -Ac    → autoclean"
-      echo "  -C     → clean"
+      echo "  -Q     → list installed packages"
+      echo "  -Qe    → list manually installed packages"
+      echo "  -Qs    → search in installed packages"
+      echo "  -Qdt   → list orphaned dependencies"
+      echo "  -Qk    → verify package integrity"
+      echo "  -Ar    → autoremove unused packages"
+      echo "  -Ac    → autoclean package cache"
+      echo "  -C     → clean package cache"
+      echo "  --help → show this help"
+      echo "  --version → show version"
       ;;
     --version|-v)
       echo "pacman wrapper v1.0"
