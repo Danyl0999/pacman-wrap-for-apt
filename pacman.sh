@@ -127,7 +127,7 @@ pacman() {
       echo "  --version → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.2"
+      echo "pacman wrapper v1.0.2"
       ;;
     *)
       echo "E: Unsupported command." >&2
