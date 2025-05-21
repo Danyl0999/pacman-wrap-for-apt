@@ -28,6 +28,10 @@ pacman() {
     -Syu)
       sudo apt update && sudo apt upgrade -y
       ;;
+    -Scc)
+        sudo apt clean
+        sudo apt clean
+        ;;
     -Qi)
       shift
       if [ $# -eq 0 ]; then
@@ -66,7 +70,7 @@ pacman() {
     -C)
       sudo apt clean
       ;;
-    -Sy)
+    -Sy|-Syy)
       sudo apt update
       ;;
     -U)
@@ -96,6 +100,9 @@ pacman() {
       fi
       apt download "$@"
       ;;
+    -Qq)
+      apt list --installed 2>/dev/null | cut -d/ -f1
+      ;;
     --help|-h)
       echo "Supported flags:"
       echo "  -S     → install packages"
@@ -104,21 +111,23 @@ pacman() {
       echo "  -R     → remove packages"
       echo "  -Ss    → search in repositories"
       echo "  -Syu   → update package list and upgrade"
-      echo "  -Sy    → update package list only"
+      echo "  -Sy/Syy    → update package list only"
       echo "  -Qi    → show package info"
       echo "  -Q     → list installed packages"
       echo "  -Qe    → list manually installed packages"
       echo "  -Qs    → search in installed packages"
       echo "  -Qdt   → list orphaned dependencies"
       echo "  -Qk    → verify package integrity"
+      echo "  -Qq    → list installed packages (quiet, names only)"
       echo "  -Ar    → autoremove unused packages"
       echo "  -Ac    → autoclean package cache"
       echo "  -C     → clean package cache"
+      echo "  -Scc   → fully clean package cache"
       echo "  --help → show this help"
       echo "  --version → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0"
+      echo "pacman wrapper v1.2"
       ;;
     *)
       echo "E: Unsupported command." >&2
