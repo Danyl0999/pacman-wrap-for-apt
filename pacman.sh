@@ -67,7 +67,7 @@ pacman() {
     -Ac)
       sudo apt autoclean
       ;;
-    -C)
+    -Sc)
       sudo apt clean
       ;;
     -Sy|-Syy)
@@ -121,13 +121,13 @@ pacman() {
       echo "  -Qq    → list installed packages (quiet, names only)"
       echo "  -Ar    → autoremove unused packages"
       echo "  -Ac    → autoclean package cache"
-      echo "  -C     → clean package cache"
+      echo "  -Sc     → clean package cache"
       echo "  -Scc   → fully clean package cache"
       echo "  --help → show this help"
       echo "  --version → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.2"
+      echo "pacman wrapper v1.0.3"
       ;;
     *)
       echo "E: Unsupported command." >&2
