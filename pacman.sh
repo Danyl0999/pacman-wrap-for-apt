@@ -27,6 +27,7 @@ pacman() {
       ;;
     -Syu)
       sudo apt update && sudo apt upgrade -y
+      flatpak update
       ;;
     -Scc)
         sudo apt clean
@@ -127,7 +128,7 @@ pacman() {
       echo "  --version → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.3"
+      echo "pacman wrapper v1.0.4"
       ;;
     *)
       echo "E: Unsupported command." >&2
