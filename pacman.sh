@@ -62,6 +62,14 @@ pacman() {
     -Qk)  
       sudo dpkg --verify
       ;;
+    -Ql)
+      shift
+      if [ $# -eq 0 ]; then
+          echo "E: No package provided." >&2
+          return 1
+      fi
+      sudo dpkg -L "$@"
+      ;;
     -Ar)
       sudo apt autoremove
       ;;
@@ -120,15 +128,16 @@ pacman() {
       echo "  -Qdt   → list orphaned dependencies"
       echo "  -Qk    → verify package integrity"
       echo "  -Qq    → list installed packages (quiet, names only)"
+      echo "  -Ql    → list files installed by packages"
       echo "  -Ar    → autoremove unused packages"
       echo "  -Ac    → autoclean package cache"
-      echo "  -Sc     → clean package cache"
+      echo "  -Sc    → clean package cache"
       echo "  -Scc   → fully clean package cache"
       echo "  --help → show this help"
       echo "  --version → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.4"
+      echo "pacman wrapper v1.0.5"
       ;;
     *)
       echo "E: Unsupported command." >&2
