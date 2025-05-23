@@ -59,7 +59,14 @@ pacman() {
       fi
       apt list --installed 2>/dev/null | grep -i "$@"
       ;;
-    -Qk)  
+    -Qv)
+      if [ $# -eq 0 ]; then
+          echo "E: No package specified for version query." >&2
+          return 1
+      fi
+      dpkg -s "$@" | grep '^Version:'
+      ;;
+    -Qk)
       sudo dpkg --verify
       ;;
     -Ql)
@@ -68,7 +75,10 @@ pacman() {
           echo "E: No package provided." >&2
           return 1
       fi
-      sudo dpkg -L "$@"
+      dpkg -L "$@"
+      ;;
+    -Qm)
+      apt list --installed 2>/dev/null | grep "\[installed,local\]"
       ;;
     -Sar)
       sudo apt autoremove
@@ -81,6 +91,16 @@ pacman() {
       ;;
     -Sy|-Syy)
       sudo apt update
+      ;;
+    -Su)
+      sudo apt upgrade
+      ;;
+    -Srn)
+      if [ $# -eq 0  ]; then
+          echo "E: No package specified for purge removal." >&2
+          return 1
+      fi
+      sudo apt --purge remove "$@"
       ;;
     -U)
       shift
@@ -114,30 +134,34 @@ pacman() {
       ;;
     --help|-h)
       echo "Supported flags:"
-      echo "  -S     → install packages"
-      echo "  -G     → download package as .deb file"
-      echo "  -U     → install from .deb file"
-      echo "  -R     → remove packages"
-      echo "  -Ss    → search in repositories"
-      echo "  -Syu   → update package list and upgrade"
+      echo "  -S         → install packages"
+      echo "  -G         → download package as .deb file"
+      echo "  -U         → install from .deb file"
+      echo "  -R         → remove packages"
+      echo "  -Srn       → remove packages with config files"
+      echo "  -Ss        → search in repositories"
+      echo "  -Syu       → update package list and upgrade"
       echo "  -Sy/Syy    → update package list only"
-      echo "  -Qi    → show package info"
-      echo "  -Q     → list installed packages"
-      echo "  -Qe    → list manually installed packages"
-      echo "  -Qs    → search in installed packages"
-      echo "  -Qdt   → list orphaned dependencies"
-      echo "  -Qk    → verify package integrity"
-      echo "  -Qq    → list installed packages (quiet, names only)"
-      echo "  -Ql    → list files installed by packages"
-      echo "  -Sar    → autoremove unused packages"
-      echo "  -Sac    → autoclean package cache"
-      echo "  -Sc    → clean package cache"
-      echo "  -Scc   → fully clean package cache"
-      echo "  --help → show this help"
-      echo "  --version → show version"
+      echo "  -Su        → upgrade system (don\`t update package list)"
+      echo "  -Q         → list installed packages"
+      echo "  -Qi        → show package info"
+      echo "  -Qe        → list manually installed packages"
+      echo "  -Qm        → list foreign packages"
+      echo "  -Qs        → search in installed packages"
+      echo "  -Qdt       → list orphaned dependencies"
+      echo "  -Qk        → verify package integrity"
+      echo "  -Qv        → show package version"
+      echo "  -Qq        → list installed packages (quiet, names only)"
+      echo "  -Ql        → list files installed by packages"
+      echo "  -Sar       → autoremove unused packages"
+      echo "  -Sac       → autoclean package cache"
+      echo "  -Sc        → clean package cache"
+      echo "  -Scc       → fully clean package cache"
+      echo "  --help     → show this help"
+      echo "  --version  → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.6"
+      echo "pacman wrapper v1.0.7"
       ;;
     *)
       echo "E: Unsupported command." >&2
