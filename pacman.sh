@@ -70,10 +70,10 @@ pacman() {
       fi
       sudo dpkg -L "$@"
       ;;
-    -Ar)
+    -Sar)
       sudo apt autoremove
       ;;
-    -Ac)
+    -Sac)
       sudo apt autoclean
       ;;
     -Sc)
@@ -129,15 +129,15 @@ pacman() {
       echo "  -Qk    → verify package integrity"
       echo "  -Qq    → list installed packages (quiet, names only)"
       echo "  -Ql    → list files installed by packages"
-      echo "  -Ar    → autoremove unused packages"
-      echo "  -Ac    → autoclean package cache"
+      echo "  -Sar    → autoremove unused packages"
+      echo "  -Sac    → autoclean package cache"
       echo "  -Sc    → clean package cache"
       echo "  -Scc   → fully clean package cache"
       echo "  --help → show this help"
       echo "  --version → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.5"
+      echo "pacman wrapper v1.0.6"
       ;;
     *)
       echo "E: Unsupported command." >&2
