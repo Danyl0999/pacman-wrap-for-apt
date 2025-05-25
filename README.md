@@ -43,3 +43,7 @@ Then add the following line to your **.bashrc** file:
 ```bash
 source ~/.pacman_wrap/pacman.sh
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
