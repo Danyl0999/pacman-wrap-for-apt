@@ -57,7 +57,7 @@ pacman() {
           echo "E: No search term provided." >&2
           return 1
       fi
-      apt list --installed 2>/dev/null | grep -i "$@"
+      apt list --installed 2>/dev/null | grep -i "$*"
       ;;
     -Qv)
       if [ $# -eq 0 ]; then
@@ -161,7 +161,7 @@ pacman() {
       echo "  --version  → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.7"
+      echo "pacman wrapper v1.0.8"
       ;;
     *)
       echo "E: Unsupported command." >&2
