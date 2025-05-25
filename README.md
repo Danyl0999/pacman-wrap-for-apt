@@ -1,42 +1,45 @@
 # Pacman wrap for apt
 ## About
 
-This pluggin reworks default apt package manager looks like pacman package manager.
+This plugin reworks the default APT package manager 
+to behave like the Pacman package manager.
 
-## Use
->Install package
+## Usage
 
-`
-pacman -S <Package name>
-`
+> Install package
 
->Remove
+```bash
+pacman -S <package-name>
+```
 
-`
-pacman -R <Package name>
-`
+> Remove package
 
->Update system
+```bash
+pacman -R <package-name>
+```
 
-`
+> Update system
+
+```bash
 pacman -Syu
-`
+```
 
 For more info see:
 
-`
+```bash
 pacman --help
-`
+```
 
-## Install
-First run this:
+## Installation
 
-`
-git clone https://github.com/Danyl0999/pacman-apt-wrap.git ~/.pacman_wrap
-`
+First, clone the repository:
 
-After you run it add this to your `.bashrc` file:
+```bash
+git clone https://github.com/Danyl0999/pacman-wrap-for-apt.git ~/.pacman_wrap
+```
 
-`
+Then add the following line to your **.bashrc** file:
+
+```bash
 source ~/.pacman_wrap/pacman.sh
-`
+```
