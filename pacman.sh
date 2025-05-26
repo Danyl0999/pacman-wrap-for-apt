@@ -132,6 +132,14 @@ pacman() {
     -Qq)
       apt list --installed 2>/dev/null | cut -d/ -f1
       ;;
+    -Ar)
+      shift
+      if [ $# -eq 0 ]; then
+          echo "E: No repository name specified to add." >&2
+          return 1
+      fi
+      sudo apt add-repository -y "$*"
+      ;;
     --help|-h)
       echo "Supported flags:"
       echo "  -S         → install packages"
@@ -157,11 +165,12 @@ pacman() {
       echo "  -Sac       → autoclean package cache"
       echo "  -Sc        → clean package cache"
       echo "  -Scc       → fully clean package cache"
+      echo "  -Ar        → add apt repository"
       echo "  --help     → show this help"
       echo "  --version  → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.8"
+      echo "pacman wrapper v1.0.9"
       ;;
     *)
       echo "E: Unsupported command." >&2
