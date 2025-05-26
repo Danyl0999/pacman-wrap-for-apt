@@ -2,7 +2,7 @@
 ## About
 
 This plugin reworks the default `APT package manager` 
-to behave like the `Pacman` package manager.
+to behave like the `Pacman package manager`.
 
 This is useful for users transitioning from Arch Linux to Debian/Ubuntu-based systems
 or anyone who prefers the `pacman` command syntax.
