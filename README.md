@@ -1,10 +1,20 @@
 # Pacman wrap for apt
 ## About
 
-This plugin reworks the default APT package manager 
-to behave like the Pacman package manager.
+This plugin reworks the default `APT package manager` 
+to behave like the `Pacman` package manager.
 
-## Usage
+This is useful for users transitioning from Arch Linux to Debian/Ubuntu-based systems
+or anyone who prefers the `pacman` command syntax.
+
+## Features
+
+- Mimics most commonly used `pacman` commands.
+- Supports `.deb` installation (`-U`), download (`-G`) and cache cleaning
+- Lists orphaned packages, manually installed packages and more
+- Includes `--help` output for all flags
+
+## Usage examples
 
 > Install package
 
@@ -38,10 +48,24 @@ First, clone the repository:
 git clone https://github.com/Danyl0999/pacman-wrap-for-apt.git ~/.pacman_wrap
 ```
 
-Then add the following line to your **.bashrc** file:
+Then, source it in your shell startup file:
+
+For **Bash** (`~/.bashrc`):
 
 ```bash
 source ~/.pacman_wrap/pacman.sh
+```
+
+For **Zsh** (`~/.zshrc`):
+
+```bash
+source ~/.pacman_wrap/pacman.sh
+```
+
+Apply changes:
+
+```bash
+source ~/.bashrc
 ```
 
 ## License
