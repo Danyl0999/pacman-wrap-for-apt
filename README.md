@@ -34,6 +34,12 @@ pacman -R <package-name>
 pacman -Syu
 ```
 
+> Search in repositories
+
+```bash
+pacman -Ss
+```
+
 For more info see:
 
 ```bash
