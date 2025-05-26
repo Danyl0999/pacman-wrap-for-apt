@@ -80,7 +80,7 @@ pacman() {
     -Qm)
       apt list --installed 2>/dev/null | grep "\[installed,local\]"
       ;;
-    -Sar)
+    -Rns)
       sudo apt autoremove
       ;;
     -Sac)
@@ -162,7 +162,7 @@ pacman() {
       echo "  -Qv        → show package version"
       echo "  -Qq        → list installed packages (quiet, names only)"
       echo "  -Ql        → list files installed by packages"
-      echo "  -Sar       → autoremove unused packages"
+      echo "  -Rns       → autoremove unused packages"
       echo "  -Sac       → autoclean package cache"
       echo "  -Sc        → clean package cache"
       echo "  -Scc       → fully clean package cache"
@@ -171,7 +171,7 @@ pacman() {
       echo "  --version  → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.9.1"
+      echo "pacman wrapper v1.0.9.2"
       ;;
     *)
       echo "E: Unsupported command." >&2
