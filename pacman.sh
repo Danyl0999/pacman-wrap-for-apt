@@ -96,6 +96,7 @@ pacman() {
       sudo apt upgrade
       ;;
     -Srn)
+      shift
       if [ $# -eq 0  ]; then
           echo "E: No package specified for purge removal." >&2
           return 1
@@ -170,7 +171,7 @@ pacman() {
       echo "  --version  → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.9"
+      echo "pacman wrapper v1.0.9.1"
       ;;
     *)
       echo "E: Unsupported command." >&2
