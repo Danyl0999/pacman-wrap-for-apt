@@ -13,6 +13,10 @@ pacman() {
       fi
       sudo apt install --no-install-recommends -y "$@"
       ;;
+    -Sr)
+      shift
+      sudo apt install --reinstall -y "$@"
+      ;;
     -R)
       shift
       if [ $# -eq 0 ]; then
@@ -27,10 +31,9 @@ pacman() {
       ;;
     -Syu)
       sudo apt update && sudo apt upgrade -y
-      flatpak update
+      flatpak update -y
       ;;
     -Scc)
-        sudo apt clean
         sudo apt clean
         ;;
     -Qi)
@@ -81,13 +84,14 @@ pacman() {
       apt list --installed 2>/dev/null | grep "\[installed,local\]"
       ;;
     -Rns)
-      sudo apt autoremove
-      ;;
-    -Sac)
-      sudo apt autoclean
+      shift
+      if [ $# -ne 0 ]; then
+        sudo apt --purge remove "$@"
+      fi
+      sudo apt autoremove -y
       ;;
     -Sc)
-      sudo apt clean
+      sudo apt autoclean
       ;;
     -Sy|-Syy)
       sudo apt update
@@ -95,7 +99,7 @@ pacman() {
     -Su)
       sudo apt upgrade
       ;;
-    -Srn)
+    -Rs)
       shift
       if [ $# -eq 0  ]; then
           echo "E: No package specified for purge removal." >&2
@@ -118,7 +122,7 @@ pacman() {
           echo "E: Not a .deb file: $file" >&2
           return 1
         fi
-        sudo apt install -y "$file"
+        sudo dpkg -i "$file" || apt-get -f install
       done
       ;;
 
@@ -141,37 +145,56 @@ pacman() {
       fi
       sudo apt add-repository -y "$*"
       ;;
+    -Qu)
+      apt list --upgradable
+      ;;
+    -Sssec)
+      sudo apt update
+      apt list --upgradable | grep -i security
+      ;;
+    -Sccc)
+      sudo apt clean
+      sudo apt autoclean
+      sudo apt autoremove -y
+      ;;
+    -Qf)
+      sudo dpkg --configure -a
+      sudo apt-get install -f
+      ;;
     --help|-h)
       echo "Supported flags:"
-      echo "  -S         → install packages"
+      echo "  -S         → install package"
+      echo "  -Sr        → reinstall package"
       echo "  -G         → download package as .deb file"
       echo "  -U         → install from .deb file"
-      echo "  -R         → remove packages"
-      echo "  -Srn       → remove packages with config files"
+      echo "  -R         → remove package"
+      echo "  -Rs        → remove package with config files"
       echo "  -Ss        → search in repositories"
       echo "  -Syu       → update package list and upgrade"
       echo "  -Sy/Syy    → update package list only"
       echo "  -Su        → upgrade system (don\`t update package list)"
       echo "  -Q         → list installed packages"
+      echo "  -Sssec     → check security updates"
+      echo "  -Sccc      → fully clean cache and remove unused packages"
       echo "  -Qi        → show package info"
       echo "  -Qe        → list manually installed packages"
       echo "  -Qm        → list foreign packages"
       echo "  -Qs        → search in installed packages"
       echo "  -Qdt       → list orphaned dependencies"
       echo "  -Qk        → verify package integrity"
+      echo "  -Qf        → check and fix packages"
       echo "  -Qv        → show package version"
       echo "  -Qq        → list installed packages (quiet, names only)"
       echo "  -Ql        → list files installed by packages"
-      echo "  -Rns       → autoremove unused packages"
-      echo "  -Sac       → autoclean package cache"
-      echo "  -Sc        → clean package cache"
-      echo "  -Scc       → fully clean package cache"
+      echo "  -Rns       → remove package with config"
+      echo "  -Sc        → remove old cached .deb files"
+      echo "  -Scc       → clear package cache"
       echo "  -Ar        → add apt repository"
       echo "  --help     → show this help"
       echo "  --version  → show version"
       ;;
     --version|-v)
-      echo "pacman wrapper v1.0.9.2"
+      echo "pacman wrapper v1.1.0"
       ;;
     *)
       echo "E: Unsupported command." >&2
