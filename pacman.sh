@@ -186,7 +186,7 @@ pacman() {
       echo "  -Qv        → show package version"
       echo "  -Qq        → list installed packages (quiet, names only)"
       echo "  -Ql        → list files installed by packages"
-      echo "  -Rns       → remove package with config"
+      echo "  -Rns       → remove package with config / autoremove packages"
       echo "  -Sc        → remove old cached .deb files"
       echo "  -Scc       → clear package cache"
       echo "  -Ar        → add apt repository"
