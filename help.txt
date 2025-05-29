@@ -1,0 +1,39 @@
+General:
+  -S         Install packages
+  -Sr        Reinstall packages
+  -R         Remove packages
+  -Rns       Remove packages with config files
+  -U         Install from .deb
+  -G         Download .deb
+
+Query:
+  -Q         List installed
+  -Qi        Info
+  -Qv        Version
+  -Ss        Search in repositories
+  -Qs        Search in installed packages
+  -Ql        List files of package
+  -Qe        List manually installed packages
+  -Qm        List foreign packages
+  -Qdt       List orphaned dependencies
+  -Qq        List installed (quiet)
+
+Maintenance:
+  -Syu       Update and full upgrade
+  -Sy        Update repositories
+  -Syy       Update repositories (same as -Sy)
+  -Su        Upgrade system (don`t update repositories)
+  -Sssec     Check security updates
+  -Sccc      Clean all
+  -Rns       Remove unused packages
+  -Sc        Remove old cached .deb files
+  -Scc       Clear package cache
+  -Qf        Fix broken
+  -Qk        Verify package integrity
+  -Slog      Show last installations log
+  -Sown      Show which package owns a file
+  -Ar        Add repository
+
+Plugin info:
+  --help     Help
+  --version  Version
