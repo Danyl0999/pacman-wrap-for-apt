@@ -37,3 +37,6 @@ Maintenance:
 Plugin info:
   --help     Help
   --version  Version
+
+Arguments:
+  --dry-run  Simulate action (for apt commands only)

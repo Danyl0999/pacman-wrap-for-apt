@@ -2,11 +2,20 @@ pacman() {
   local RED='\e[31m'
   local RESET='\e[0m'
   local SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")" 
+  local DRY_RUN=""
+
+  for arg in "$@"; do
+    if [ "$arg" = "--dry-run" ]; then
+      DRY_RUN="--simulate"
+      break
+    fi
+  done
+
   if [ $# -eq 0 ]; then
       echo "Use --help to show help."
       return 1
   fi
-
+  
   case "$1" in
     -S)
       shift
@@ -14,11 +23,11 @@ pacman() {
           echo -e "${RED}E${RESET}: No package specified for install." >&2
           return 1
       fi
-      sudo apt install --no-install-recommends -y "$@"
+      sudo apt install --no-install-recommends -y $DRY_RUN "$@"
       ;;
     -Sr)
       shift
-      sudo apt install --reinstall -y "$@"
+      sudo apt install --reinstall -y $DRY_RUN "$@"
       ;;
     -R)
       shift
@@ -26,14 +35,14 @@ pacman() {
           echo -e "${RED}E${RESET}: No package specified for removal." >&2
           return 1
       fi
-      sudo apt remove "$@"
+      sudo apt remove -y $DRY_RUN "$@"
       ;;
     -Ss)
       shift
       apt search "$@"
       ;;
     -Syu)
-      sudo apt update && sudo apt upgrade -y
+      sudo apt update && sudo apt upgrade $DRY_RUN -y
       flatpak update -y
       ;;
     -Scc)
@@ -89,9 +98,9 @@ pacman() {
     -Rns)
       shift
       if [ $# -ne 0 ]; then
-        sudo apt --purge remove "$@"
+        sudo apt --purge remove -y $DRY_RUN "$@"
       fi
-      sudo apt autoremove -y
+      sudo apt autoremove $DRY_RUN -y
       ;;
     -Sc)
       sudo apt autoclean
@@ -100,7 +109,7 @@ pacman() {
       sudo apt update
       ;;
     -Su)
-      sudo apt upgrade
+      sudo apt upgrade $DRY_RUN -y
       ;;
     -U)
       shift
@@ -117,7 +126,7 @@ pacman() {
           echo -e "${RED}E${RESET}: Not a .deb file: $file" >&2
           return 1
         fi
-        sudo dpkg -i "$file" || sudo apt-get -f install -y
+        sudo dpkg -i "$file" || sudo apt-get -f install $DRY_RUN -y
       done
       ;;
 
@@ -154,7 +163,7 @@ pacman() {
       ;;
     -Qf)
       sudo dpkg --configure -a
-      sudo apt-get install -f
+      sudo apt-get install $DRY_RUN -f -y
       ;;
     -Slog)
       grep " install " /var/log/dpkg.log | tail -n 20
@@ -171,7 +180,7 @@ pacman() {
         cat "$SCRIPT_DIR/help.txt"
         ;;
     --version|-v)
-      echo "pacman wrapper v1.1.1"
+      echo "pacman wrapper v1.1.2"
       ;;
     *)
       echo -e "${RED}E${RESET}: Unsupported command." >&2
