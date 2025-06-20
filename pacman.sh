@@ -1,13 +1,16 @@
 pacman() {
   local RED='\e[31m'
   local RESET='\e[0m'
-  local SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")" 
   local DRY_RUN=""
+  local RECOMENDATIONS="--no-install-recommends"
 
   for arg in "$@"; do
     if [ "$arg" = "--dry-run" ]; then
       DRY_RUN="--simulate"
       break
+    fi
+    if [ "$arg" = "--install-recomends" ]; then
+      RECOMENDATIONS=""
     fi
   done
 
@@ -23,7 +26,7 @@ pacman() {
           echo -e "${RED}E${RESET}: No package specified for install." >&2
           return 1
       fi
-      sudo apt install --no-install-recommends -y $DRY_RUN "$@"
+      sudo apt install $RECOMENDATIONS -y $DRY_RUN "$@"
       ;;
     -Sr)
       shift
@@ -177,7 +180,7 @@ pacman() {
       dpkg -S "$1"
       ;;
     --help|-h)
-        cat "$SCRIPT_DIR/help.txt"
+        cat "~/.pacman_wrap/help.txt"
         ;;
     --version|-v)
       echo "pacman wrapper v1.1.2"
