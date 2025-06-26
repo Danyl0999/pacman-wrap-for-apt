@@ -38,6 +38,8 @@ Plugin info:
   --help                 Help
   --version              Version
 
-Arguments:
+Flags:
   --dry-run              Simulate action (for apt commands only)
   --install-recommends   Install recomendations
+  --no-flatpak           Don`t use flatpak
+  --verbose              Verbose output mode (for apt commands only)

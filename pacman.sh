@@ -3,14 +3,21 @@ pacman() {
   local RESET='\e[0m'
   local DRY_RUN=""
   local RECOMENDATIONS="--no-install-recommends"
+  local FLATPAK=1
+  local VERBOSE=""
 
   for arg in "$@"; do
     if [ "$arg" = "--dry-run" ]; then
       DRY_RUN="--simulate"
-      break
     fi
     if [ "$arg" = "--install-recomends" ]; then
       RECOMENDATIONS=""
+    fi
+    if [ "$arg" = "--no-flatpak" ]; then
+      FLATPAK=0
+    fi
+    if [ "$arg" = "--verbose" ] || [ "$arg" = "-v" ]; then
+      VERBOSE="-v"
     fi
   done
 
@@ -26,11 +33,11 @@ pacman() {
           echo -e "${RED}E${RESET}: No package specified for install." >&2
           return 1
       fi
-      sudo apt install $RECOMENDATIONS -y $DRY_RUN "$@"
+      sudo apt install $RECOMENDATIONS -y $DRY_RUN $VERBOSE "$@"
       ;;
     -Sr)
       shift
-      sudo apt install --reinstall -y $DRY_RUN "$@"
+      sudo apt install --reinstall -y $DRY_RUN $VERBOSE "$@"
       ;;
     -R)
       shift
@@ -38,15 +45,17 @@ pacman() {
           echo -e "${RED}E${RESET}: No package specified for removal." >&2
           return 1
       fi
-      sudo apt remove -y $DRY_RUN "$@"
+      sudo apt remove -y $DRY_RUN $VERBOSE "$@"
       ;;
     -Ss)
       shift
       apt search "$@"
       ;;
     -Syu)
-      sudo apt update && sudo apt upgrade $DRY_RUN -y
-      flatpak update -y
+      sudo apt update && sudo apt upgrade $VERBOSE $DRY_RUN -y
+      if [ "$FLATPAK" -eq 1 ]; then
+        flatpak update -y
+      fi
       ;;
     -Scc)
         sudo apt clean
@@ -103,16 +112,16 @@ pacman() {
       if [ $# -ne 0 ]; then
         sudo apt --purge remove -y $DRY_RUN "$@"
       fi
-      sudo apt autoremove $DRY_RUN -y
+      sudo apt autoremove $DRY_RUN $VERBOSE -y
       ;;
     -Sc)
       sudo apt autoclean
       ;;
     -Sy|-Syy)
-      sudo apt update
+      sudo apt update $DRY_RUN $VERBOSE
       ;;
     -Su)
-      sudo apt upgrade $DRY_RUN -y
+      sudo apt upgrade $DRY_RUN $VERBOSE -y
       ;;
     -U)
       shift
@@ -129,7 +138,7 @@ pacman() {
           echo -e "${RED}E${RESET}: Not a .deb file: $file" >&2
           return 1
         fi
-        sudo dpkg -i "$file" || sudo apt-get -f install $DRY_RUN -y
+        sudo dpkg -i "$file" || sudo apt-get -f install $VERBOSE $DRY_RUN -y
       done
       ;;
 
@@ -180,10 +189,10 @@ pacman() {
       dpkg -S "$1"
       ;;
     --help|-h)
-        cat "~/.pacman_wrap/help.txt"
+        cat "/home/$(whoami)/.pacman_wrap/help.txt"
         ;;
     --version|-v)
-      echo "pacman wrapper v1.1.2"
+      echo "pacman wrapper v1.1.3"
       ;;
     *)
       echo -e "${RED}E${RESET}: Unsupported command." >&2
