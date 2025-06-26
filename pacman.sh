@@ -189,10 +189,14 @@ pacman() {
       dpkg -S "$1"
       ;;
     --help|-h)
-        cat "/home/$(whoami)/.pacman_wrap/help.txt"
+        if [ $EUID -ne 0 ]; then
+          cat "/home/$(whoami)/.pacman_wrap/help.txt"
+        else
+           cat "$(whoami)/.pacman_wrap/help.txt"
+        fi
         ;;
     --version|-v)
-      echo "pacman wrapper v1.1.3"
+      echo "pacman wrapper v1.1.3.1"
       ;;
     *)
       echo -e "${RED}E${RESET}: Unsupported command." >&2
