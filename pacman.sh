@@ -192,11 +192,11 @@ pacman() {
         if [ $EUID -ne 0 ]; then
           cat "/home/$(whoami)/.pacman_wrap/help.txt"
         else
-           cat "$(whoami)/.pacman_wrap/help.txt"
+           cat "/$(whoami)/.pacman_wrap/help.txt"
         fi
         ;;
     --version|-v)
-      echo "pacman wrapper v1.1.3.1"
+      echo "pacman wrapper v1.1.3.2"
       ;;
     *)
       echo -e "${RED}E${RESET}: Unsupported command." >&2
