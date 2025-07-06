@@ -54,24 +54,11 @@ First, clone the repository:
 git clone https://github.com/Danyl0999/pacman-wrap-for-apt.git ~/.pacman_wrap
 ```
 
-Then, source it in your shell startup file:
-
-For **Bash** (`~/.bashrc`):
+Then make it excutable and link it to /usr/local/bin/pacman
 
 ```bash
-source ~/.pacman_wrap/pacman.sh
-```
-
-For **Zsh** (`~/.zshrc`):
-
-```bash
-source ~/.pacman_wrap/pacman.sh
-```
-
-Apply changes:
-
-```bash
-source ~/.bashrc
+chmod +x ~/.pacman_wrap/pacman.sh
+sudo ln ~/.pacman_wrap/pacman.sh /usr/local/bin/pacman
 ```
 
 ## License
