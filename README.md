@@ -19,19 +19,19 @@ or anyone who prefers the `pacman` command syntax.
 > Install package
 
 ```bash
-pacman -S <package-name>
+sudo pacman -S <package-name>
 ```
 
 > Remove package
 
 ```bash
-pacman -R <package-name>
+sudo pacman -R <package-name>
 ```
 
 > Update system
 
 ```bash
-pacman -Syu
+sudo pacman -Syu
 ```
 
 > Search in repositories
