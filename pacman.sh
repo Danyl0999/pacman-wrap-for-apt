@@ -68,8 +68,14 @@ case "$1" in
   apt update && apt upgrade $VERBOSE $DRY_RUN -y
   ;;
 -Scc)
-    sudo apt clean
-    ;;
+  if [ "$UID" -ne 0 ]; then
+    echo -e "${RED}E${RESET}: Permission denied." >&2
+    exit 1
+  fi
+  apt autoclean
+  apt clean
+  apt autoremove -y
+  ;;
 -Qi)
   shift
   if [ $# -eq 0 ]; then
@@ -219,6 +225,9 @@ case "$1" in
       echo -e "${RED}E${RESET}: Permission denied." >&2
       exit 1
   fi
+  rm -fv /var/cache/apt/*.bin
+  rm -fv /var/cache/apt/archives/*.*
+  rm -fv /var/lib/apt/lists/*.*
   apt clean
   apt autoclean
   apt autoremove -y
@@ -246,7 +255,7 @@ case "$1" in
     cat "/home/$(whoami)/.pacman_wrap/help.txt"
     ;;
 --version|-v)
-  echo "pacman wrapper v1.1.4"
+  echo "pacman wrapper v1.1.5"
   ;;
 *)
   echo -e "${RED}E${RESET}: Unsupported command." >&2

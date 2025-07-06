@@ -24,10 +24,10 @@ Maintenance:
   -Syy                   Update repositories (same as -Sy)
   -Su                    Upgrade system (don`t update repositories)
   -Sssec                 Check security updates
-  -Sccc                  Clean all
   -Rns                   Remove unused packages
-  -Sc                    Remove old cached .deb files
-  -Scc                   Clear package cache
+  -Sc                    Clear old cached packages
+  -Scc                   Clear all packages
+  -Sccc                  Deep clean all packages cache
   -Qf                    Fix broken
   -Qk                    Verify package integrity
   -Slog                  Show last installations log
