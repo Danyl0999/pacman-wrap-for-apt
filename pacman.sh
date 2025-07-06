@@ -4,7 +4,6 @@ RED='\e[31m'
 RESET='\e[0m'
 DRY_RUN=""
 RECOMENDATIONS="--no-install-recommends"
-FLATPAK=1
 VERBOSE=""
 
 for arg in "$@"; do
@@ -14,9 +13,6 @@ fi
 if [ "$arg" = "--install-recomends" ]; then
   RECOMENDATIONS=""
 fi
-if [ "$arg" = "--no-flatpak" ]; then
-  FLATPAK=0
-fi
 if [ "$arg" = "--verbose" ] || [ "$arg" = "-v" ]; then
   VERBOSE="-v"
 fi
@@ -24,39 +20,52 @@ done
 
 if [ $# -eq 0 ]; then
   echo "Use --help to show help."
-  return 1
+  exit 1
 fi
 
 case "$1" in
 -S)
   shift
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
   if [ $# -eq 0  ]; then
       echo -e "${RED}E${RESET}: No package specified for install." >&2
-      return 1
+      exit 1
   fi
-  sudo apt install $RECOMENDATIONS -y $DRY_RUN $VERBOSE "$@"
+  apt install $RECOMENDATIONS -y $DRY_RUN $VERBOSE "$@"
   ;;
 -Sr)
   shift
-  sudo apt install --reinstall -y $DRY_RUN $VERBOSE "$@"
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  apt install --reinstall -y $DRY_RUN $VERBOSE "$@"
   ;;
 -R)
   shift
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No package specified for removal." >&2
-      return 1
+      exit 1
   fi
-  sudo apt remove -y $DRY_RUN $VERBOSE "$@"
+  apt remove -y $DRY_RUN $VERBOSE "$@"
   ;;
 -Ss)
   shift
   apt search "$@"
   ;;
 -Syu)
-  sudo apt update && sudo apt upgrade $VERBOSE $DRY_RUN -y
-  if [ "$FLATPAK" -eq 1 ]; then
-    flatpak update -y
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
   fi
+  apt update && apt upgrade $VERBOSE $DRY_RUN -y
   ;;
 -Scc)
     sudo apt clean
@@ -65,7 +74,7 @@ case "$1" in
   shift
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No package specified for info." >&2
-      return 1
+      exit 1
   fi
   apt show "$@"
   ;;
@@ -83,25 +92,29 @@ case "$1" in
   shift
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No search term provided." >&2
-      return 1
+      exit 1
   fi
   apt list --installed 2>/dev/null | grep -i "$*"
   ;;
 -Qv)
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No package specified for version query." >&2
-      return 1
+      exit 1
   fi
   dpkg -s "$@" | grep '^Version:'
   ;;
 -Qk)
-  sudo dpkg --verify
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  dpkg --verify
   ;;
 -Ql)
   shift
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No package provided." >&2
-      return 1
+      exit 1
   fi
   dpkg -L "$@"
   ;;
@@ -110,36 +123,56 @@ case "$1" in
   ;;
 -Rns)
   shift
-  if [ $# -ne 0 ]; then
-    sudo apt --purge remove -y $DRY_RUN "$@"
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
   fi
-  sudo apt autoremove $DRY_RUN $VERBOSE -y
+  if [ $# -ne 0 ]; then
+    apt --purge remove -y $DRY_RUN "$@"
+  fi
+  apt autoremove $DRY_RUN $VERBOSE -y
   ;;
 -Sc)
-  sudo apt autoclean
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  apt autoclean
   ;;
 -Sy|-Syy)
-  sudo apt update $DRY_RUN $VERBOSE
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  apt update $DRY_RUN $VERBOSE
   ;;
 -Su)
-  sudo apt upgrade $DRY_RUN $VERBOSE -y
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  apt upgrade $DRY_RUN $VERBOSE -y
   ;;
 -U)
   shift
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No .deb file specified for install." >&2
-      return 1
+      exit 1
   fi
   for file in "$@"; do
     if [[ ! -f "$file" ]]; then
       echo -e "${RED}E${RESET}: File not found: $file" >&2
-      return 1
+      exit 1
     fi
     if [[ "$file" != *.deb ]]; then
       echo -e "${RED}E${RESET}: Not a .deb file: $file" >&2
-      return 1
+      exit 1
     fi
-    sudo dpkg -i "$file" || sudo apt-get -f install $VERBOSE $DRY_RUN -y
+    dpkg -i "$file" || apt-get -f install $VERBOSE $DRY_RUN -y
   done
   ;;
 
@@ -147,7 +180,7 @@ case "$1" in
   shift
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No package specified to download." >&2
-      return 1
+      exit 1
   fi
   apt download "$@"
   ;;
@@ -156,27 +189,43 @@ case "$1" in
   ;;
 -Ar)
   shift
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
   if [ $# -eq 0 ]; then
       echo -e "${RED}E${RESET}: No repository name specified to add." >&2
-      return 1
+      exit 1
   fi
-  sudo apt add-repository -y "$*"
+  apt add-repository -y "$*"
   ;;
 -Qu)
   apt list --upgradable
   ;;
 -Sssec)
-  sudo apt update
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  apt update
   apt list --upgradable | grep -i security
   ;;
 -Sccc)
-  sudo apt clean
-  sudo apt autoclean
-  sudo apt autoremove -y
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  apt clean
+  apt autoclean
+  apt autoremove -y
   ;;
 -Qf)
-  sudo dpkg --configure -a
-  sudo apt-get install $DRY_RUN -f -y
+  if [ "$UID" -ne 0 ]; then
+      echo -e "${RED}E${RESET}: Permission denied." >&2
+      exit 1
+  fi
+  dpkg --configure -a
+  apt-get install $DRY_RUN -f -y
   ;;
 -Slog)
   grep " install " /var/log/dpkg.log | tail -n 20
@@ -185,7 +234,7 @@ case "$1" in
   shift
   if [ -z "$1" ]; then
       echo -e "${RED}E${RESET}: No file specified." >&2
-      return 1
+      exit 1
   fi
   dpkg -S "$1"
   ;;
@@ -198,5 +247,5 @@ case "$1" in
 *)
   echo -e "${RED}E${RESET}: Unsupported command." >&2
   echo "Use --help to show help"
-  return 1
+  exit 1
 esac
