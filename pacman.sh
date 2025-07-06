@@ -10,7 +10,7 @@ for arg in "$@"; do
 if [ "$arg" = "--dry-run" ]; then
   DRY_RUN="--simulate"
 fi
-if [ "$arg" = "--install-recomends" ]; then
+if [ "$arg" = "--install-recommends" ]; then
   RECOMENDATIONS=""
 fi
 if [ "$arg" = "--verbose" ] || [ "$arg" = "-v" ]; then
@@ -83,7 +83,11 @@ case "$1" in
   apt list --installed "$@"
   ;;
 -Qdt)
-  apt-mark showauto | xargs apt-cache rdepends --installed | grep -B1 "Reverse Depends:" | grep -v "Reverse Depends:" | sort | uniq
+  if ! command -v deborphan >/dev/null 2>&1; then
+    echo -e "${RED}E${RESET}: deborphan is not installed. Please install it first." >&2
+    exit 1
+  fi
+  deborphan
   ;;
 -Qe)
   apt-mark showmanual
